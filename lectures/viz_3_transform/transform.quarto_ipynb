@@ -1,0 +1,719 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Visualization (Data Transformation)\"\n",
+        "author: \"Peter Ganong and Maggie Shi\"\n",
+        "date: today\n",
+        "date-format: long\n",
+        "format: \n",
+        "    html:\n",
+        "        echo: true\n",
+        "        toc: false\n",
+        "---\n",
+        "\n",
+        "<!--\n",
+        "    beamer:\n",
+        "        echo: true\n",
+        "        aspectratio: 169\n",
+        "        theme: default\n",
+        "        toc: true\n",
+        "        header-includes: \\renewcommand{\\tightlist}{\\setlength{\\itemsep}{5ex}\\setlength{\\parskip}{0pt}}\n",
+        "            \\setbeamertemplate{footline}[frame number] \n",
+        "            -->\n",
+        "\n",
+        "\n",
+        "\n",
+        "# introduction\n",
+        "\n",
+        "## roadmap\n",
+        "\n",
+        "* putting this lecture in context\n",
+        "* `movies` dataset\n",
+        "    * load data\n",
+        "    * `shape`\n",
+        "    * `head()`\n",
+        "\n",
+        "(no summary at end of this section)\n",
+        "\n",
+        "## putting this lecture in context\n",
+        "\n",
+        "* Fundamental problem in data visualization: in most cases, you do not want to show every single data point in your dataset. \n",
+        "* Instead, you want to extract patterns which you (the analyst) think are interesting. \n",
+        "* This lecture explores methods for *transforming* data, focusing on aggregation.\n",
+        "* One nice thing about Altair is that it nudges you to aggregate. \n",
+        "    * One example: if you try to make a plot with 10,000 dots, it will give you an error `MaxRowsError: The number of rows in your dataset is greater than the maximum allowed (5000).`\n",
+        "    * Help file: \"This is not because Altair cannot handle larger datasets, but it is because it is important for the user to think carefully about how large datasets are handled. \"\n",
+        "    * More details [here](https://altair-viz.github.io/user_guide/large_datasets.html)\n",
+        "* This lecture mostly follows Chapter 3 in the data visualization book (skip parts of section 3.2, which we will then come back to in lectures 4 and 5)\n",
+        "\n",
+        "## load packages"
+      ],
+      "id": "f837ea57"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "import altair as alt"
+      ],
+      "id": "996bf8b9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## movies dataset"
+      ],
+      "id": "859fbd10"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "movies_url = 'https://cdn.jsdelivr.net/npm/vega-datasets@1/data/movies.json'"
+      ],
+      "id": "f26dccd6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| eval: false\n",
+        "movies = pd.read_json(movies_url)"
+      ],
+      "id": "f9d952c0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| echo: false\n",
+        "movies = pd.read_json('data/movies.json')"
+      ],
+      "id": "42e4fc65",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "movies.shape"
+      ],
+      "id": "b98c6f73",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "With 3201 movies, we are going to need to do some transformation if we want to uncover any patterns in the data!\n",
+        "\n",
+        "## `head()`"
+      ],
+      "id": "f883c47d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "movies.head(5)"
+      ],
+      "id": "507778e3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Scatter plots and binning\n",
+        "\n",
+        "## Scatter plots and binning: roadmap\n",
+        "* scatter plots\n",
+        "* binning\n",
+        "\n",
+        "## scatter plot\n",
+        "* **Rotten Tomatoes** ratings are determined by taking \"thumbs up\" and \"thumbs down\" judgments from film critics and calculating the percentage of positive reviews.\n",
+        "* **IMDB ratings** are formed by averaging scores (ranging from 1 to 10) provided by the site's users."
+      ],
+      "id": "a4c681df"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_circle().encode(\n",
+        "    alt.X('Rotten_Tomatoes_Rating:Q'),\n",
+        "    alt.Y('IMDB_Rating:Q')\n",
+        ")"
+      ],
+      "id": "c84a6503",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## scatter plot -- add `bin=True`"
+      ],
+      "id": "dd2fdbfb"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_circle().encode(\n",
+        "    alt.X('Rotten_Tomatoes_Rating:Q', bin=True),\n",
+        "    alt.Y('IMDB_Rating:Q')\n",
+        ")"
+      ],
+      "id": "d91e4acf",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## scatter plot -- 20 bins"
+      ],
+      "id": "01acacb4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_circle().encode(\n",
+        "    alt.X('Rotten_Tomatoes_Rating:Q', bin=alt.BinParams(maxbins=20)),\n",
+        "    alt.Y('IMDB_Rating:Q')\n",
+        ")"
+      ],
+      "id": "92556809",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<!-- PG to SSS this section is really underwhelming. it's not incorrect, it just sucks. it is completely unclear what the point is. We might consider deleting it entirely. Or binning on both the x and the y-variable so at least there's a bit more of a payoff-->\n",
+        "\n",
+        "# Aggregation\n",
+        "\n",
+        "## Aggregation: roadmap\n",
+        "\n",
+        "In previous lectures, we actually already saw aggregation via `average()` and `min()`. We just didn't talk explicitly about that step. Now, we examine it more carefully.\n",
+        "\n",
+        "* `average()`\n",
+        "* interquartile range\n",
+        "* do-pair-share\n",
+        "\n",
+        "The Altair documentation includes the [full set of available aggregation functions](https://altair-viz.github.io/user_guide/encodings/index.html#aggregation-functions).\n",
+        "\n",
+        "\n",
+        "## `average()`\n"
+      ],
+      "id": "95b357a4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_bar().encode(\n",
+        "    alt.X('average(Rotten_Tomatoes_Rating):Q'),\n",
+        "    alt.Y('Major_Genre:N')\n",
+        ")"
+      ],
+      "id": "3c3c0265",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This plot is fine, but hard to interpret takeaways quickly.\n",
+        "\n",
+        "Discussion Question: what does the y-axis seem to be sorted on? Why?\n",
+        "\n",
+        "What should we do? Sort the bars vertically, but by what's on the x-axis. \n",
+        "\n",
+        "But we haven't mixed X and Y encodings together, yet. What's the best way to figure out how? Ask [ChatGPT](https://chatgpt.com/share/67027f83-5c0c-800a-8253-3c4b4f074dce).\n",
+        "\n",
+        "## `average()` with `sort(...)`\n",
+        "\n",
+        "Now it's clear which movie types are most and least popular\n"
+      ],
+      "id": "3166341d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#Attribution: ChatGPT\n",
+        "#Query: I have the following bar chart code in Altair [...] \n",
+        "# I want to sort the bars by the X encoding (average rotten tomatoes rating). How can I do that?\n",
+        "chart1  = alt.Chart(movies_url).mark_bar().encode(\n",
+        "    alt.X('average(Rotten_Tomatoes_Rating):Q'),\n",
+        "    alt.Y('Major_Genre:N', \n",
+        "        sort=alt.EncodingSortField(\n",
+        "            op='average', \n",
+        "            field='Rotten_Tomatoes_Rating', \n",
+        "            order='descending'\n",
+        "        )\n",
+        "    )\n",
+        ")\n",
+        "chart1"
+      ],
+      "id": "90378225",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Discussion question -- Why is \"how to sorting the order of bars\" such a great problem to submit to ChatGPT?\n",
+        "\n",
+        "\n",
+        "## Interquartile range\n"
+      ],
+      "id": "d5a1ad7b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_bar().encode(\n",
+        "    alt.X('q1(Rotten_Tomatoes_Rating):Q'),\n",
+        "    alt.X2('q3(Rotten_Tomatoes_Rating):Q'),\n",
+        "    alt.Y('Major_Genre:N', sort=alt.EncodingSortField(\n",
+        "        op='median', field='Rotten_Tomatoes_Rating', order='descending')\n",
+        "    )\n",
+        ")"
+      ],
+      "id": "0e2872c1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Discussion question -- What can you learn from the interquartile range plot that you could not learn from the plot with just `average()`?\n",
+        "\n",
+        "\n",
+        "## Case study: when are the highest grossing films?\n"
+      ],
+      "id": "a5298020"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "movies_gross = movies[['US Gross', 'Release Date']]\n",
+        "movies_gross.head()"
+      ],
+      "id": "a1389514",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## a first pass\n",
+        "\n",
+        "obviously we need to aggregate. \n",
+        "\n",
+        "also: what bug in the data does this plot reveal?\n"
+      ],
+      "id": "5c33d2db"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_line().encode(\n",
+        "    alt.X('Release_Date:T'),\n",
+        "    alt.Y('US_Gross:Q')\n",
+        ")"
+      ],
+      "id": "029ed34f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## do-pair-share \n",
+        "\n",
+        "What time of year are the highest grossing films released? Aggregate both the x- and the y-variables.\n",
+        "\n",
+        "Hint: if you aren't sure how to aggregate the x-variable, go back to the first visualization lecture as an example.\n",
+        "\n",
+        "1. *Do* -- make a plot on your own\n",
+        "\n",
+        "2. *Pair* -- compare your results with person next to you\n",
+        "\n",
+        "3. *Share* -- discuss results as a class"
+      ],
+      "id": "7083bd44"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "chart2 = alt.Chart(movies_url).().encode(\n",
+        "    alt.X('month(Release_Date):T'),\n",
+        "    alt.Y('max(US_Gross):Q')\n",
+        ")\n",
+        "chart2"
+      ],
+      "id": "a00fd275",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Aggregation: summary\n",
+        "\n",
+        "* Quantitative beyond `count()` and `average()`\n",
+        "  * Distribution: `min()`, `q1()`, `median()`, `q3()`, `max()`\n",
+        "  * Dispersion: `variance()`, `stdev()`, `distinct()`\n",
+        "  * Bootstrap confidence intervals: `ci0()`, `ci1()` \n",
+        "* Dates: see prior slide\n",
+        "\n",
+        "# Advanced data transformation\n",
+        "\n",
+        "## Advanced data transformation: roadmap\n",
+        "\n",
+        "* Two ways to aggregate data in Altair: within the encoding itself, or using a top level aggregate transform. \n",
+        "* Doing it in the encoding is fine for simple transformations, but for advanced transformations, we'll have to define it separately\n",
+        "\n",
+        "* `transform_calculate()`\n",
+        "* `transform_filter()`\n",
+        "* do-pair-share\n",
+        "* `transform_aggregate()`\n",
+        "* `transform_window()`\n",
+        "\n",
+        "These are all written in the [Vega expression language](https://vega.github.io/vega/docs/expressions/).\n",
+        "\n",
+        "\n",
+        "## Advanced data transformation: connection to packages you might already know\n",
+        "\n",
+        "Purpose | Vega | `pandas` equivalent | R `dplyr` equivalent (`df %>% ...`) | \n",
+        "| --- | --- | --- | \n",
+        "Define a new variable | `transform_calculate()` | `df['new_col']` | `mutate()` |\n",
+        "Filter to subset of rows | `transform_filter(cond)` | `df.loc[cond]` | `filter(cond)` |\n",
+        "Aggregate function - reduces number of rows down to one per group | `transform_aggregate(groupby(...))` | `df.groupby('A').agg('mean')` | `group_by(A) |> summarise(mean(...))` |\n",
+        "Window function - transform across multiple rows, keeps same num. of rows) | `transform_window(sum())` | `df['values'].cumsum()`  | `mutate(cumsum())` |\n",
+        "\n",
+        "One way to think of these verbs is that they are fundamental to any data analysis project and so in any/every language you learn, you need to know how to do these.\n",
+        "\n",
+        "## connection to prior material\n",
+        "\n",
+        "You already know how to do these all in `pandas` and in `dplyr` so it is not conceptually new. \n",
+        "\n",
+        "Why bother doing it in Altair/Vega?\n",
+        "\n",
+        "**Exploratory data analysis** can be done faster in Altair: manipulate data and plot simulataneously\n",
+        "\n",
+        "## `transform_calculate` case study redux: what time of year do US movies make money abroad? "
+      ],
+      "id": "8fe6aca9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_area().transform_calculate(\n",
+        "    NonUS_Gross='datum.Worldwide_Gross - datum.US_Gross'\n",
+        ").encode(\n",
+        "    alt.X('month(Release_Date):T'),\n",
+        "    alt.Y('median(NonUS_Gross):Q')\n",
+        ")"
+      ],
+      "id": "39f83e72",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "* `datum` is how you reference the underlying dataset within a transformation expression\n",
+        "* `transform_calculate()` uses expressions for writing basic formulas\n",
+        "    * Math functions: `min()`, `random()`, `round()`\n",
+        "    * Statistical functions: `sampleNormal()`, `sampleUniform()`\n",
+        "    * Date-time functions: `date()`, `year()`, `month()`\n",
+        "    * String functions: `length()`, `lower()`,`substring()`\n",
+        "    * Full list [here](https://vega.github.io/vega/docs/expressions/)\n",
+        "\n",
+        "\n",
+        "## `transform_filter` show just movies before 1970\n"
+      ],
+      "id": "61fc7812"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_circle().encode(\n",
+        "    alt.X('Rotten_Tomatoes_Rating:Q'),\n",
+        "    alt.Y('IMDB_Rating:Q')\n",
+        ").transform_filter('year(datum.Release_Date) < 1970')"
+      ],
+      "id": "f5b44064",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Do-pair-share\n",
+        "- Make two plots that compare ratings before and after 1970\n",
+        "    - Plot before and after 1970 on one plot\n",
+        "        - Create a categorical variable to indicate whether an observation is from before or after 1970. \n",
+        "        - Encode the color of the mark depending on the value of that categorical variable\n",
+        "    - Append together two plots side by side: a scatter plot of ratings before 1970 and after 1970\n",
+        "- Which do you prefer and why?\n",
+        "\n",
+        "\n",
+        "## `transform_aggregate` recap from earlier in lecture\n"
+      ],
+      "id": "d7c45065"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_bar().encode(\n",
+        "    alt.X('average(Rotten_Tomatoes_Rating):Q'),\n",
+        "    alt.Y('Major_Genre:N')\n",
+        ")"
+      ],
+      "id": "961dcb89",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## `transform_aggregate` what's happening under the hood\n",
+        "The previous example did the aggregation directly in the encoding. We can also express this in a more verbose way, with `transform_aggregate()`\n"
+      ],
+      "id": "9b84ad40"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_bar().transform_aggregate(\n",
+        "    groupby=['Major_Genre'],\n",
+        "    Average_Rating='average(Rotten_Tomatoes_Rating)'\n",
+        ").encode(\n",
+        "    alt.X('Average_Rating:Q'),\n",
+        "    alt.Y('Major_Genre:N')\n",
+        ")"
+      ],
+      "id": "7932bda4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Discussion question -- If prior two code blocks have identical output, which version is better (and why)?\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## `transform_window`: case study: who are the top 20 grossing directors of all time?\n",
+        "\n",
+        "Start by summing `Worldwide_Gross` for each director, and then plotting in descending order. \n"
+      ],
+      "id": "44ebecf0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_bar().transform_aggregate(\n",
+        "    Gross='sum(Worldwide_Gross)',\n",
+        "    groupby=['Director']\n",
+        ").encode(\n",
+        "    alt.X('Gross:Q'),\n",
+        "    alt.Y('Director:N', sort=alt.EncodingSortField(\n",
+        "        op='max', field='Gross', order='descending'\n",
+        "    ))\n",
+        ")"
+      ],
+      "id": "1e675c7a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "That's a lot of directors! Let's restrict to the top 20 -> `transform_window()` + `transform_filter`\n",
+        "\n",
+        "*Side note: when do we know when to use `transform_window()` vs. `transform_aggregate()`?\n",
+        "* `transform_aggregate()`: we want to reduce the number of rows (e.g., one row per group)\n",
+        "* `transform_window()`: we want to keep the same number of rows\n",
+        "\n",
+        "In this case, we want to know the *ranking* of each row, but not reduce the total number of rows. So, use `transform_window()`.\n"
+      ],
+      "id": "b185c1ad"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_bar().transform_aggregate(\n",
+        "    Gross='sum(Worldwide_Gross)',\n",
+        "    groupby=['Director']\n",
+        ").transform_window(\n",
+        "    Rank='rank()',\n",
+        "    sort=[alt.SortField('Gross', order='descending')]\n",
+        ").transform_filter(\n",
+        "    'datum.Rank <= 20'\n",
+        ").encode(\n",
+        "    alt.X('Gross:Q'),\n",
+        "    alt.Y('Director:N', sort=alt.EncodingSortField(\n",
+        "        op='max', field='Gross', order='descending'\n",
+        "    ))\n",
+        ")"
+      ],
+      "id": "1304af02",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "`null` is not a director, and we certainly don't want to say they're the highest-grossing director. So let's remove that -> `transform_filter()` again\n"
+      ],
+      "id": "31ccf841"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_bar().transform_aggregate(\n",
+        "    Gross='sum(Worldwide_Gross)',\n",
+        "    groupby=['Director']\n",
+        ").transform_window(\n",
+        "    Rank='rank()',\n",
+        "    sort=[alt.SortField('Gross', order='descending')]\n",
+        ").transform_filter(\n",
+        "    'datum.Rank <= 20'\n",
+        ").transform_filter(\n",
+        "    'datum.Director != null'\n",
+        ").encode(\n",
+        "    alt.X('Gross:Q'),\n",
+        "    alt.Y('Director:N', sort=alt.EncodingSortField(\n",
+        "        op='max', field='Gross', order='descending'\n",
+        "    ))\n",
+        ")"
+      ],
+      "id": "c06e6034",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Question**: How many directors are displayed now? Why?\n",
+        "\n",
+        "\n",
+        "We need to remove `null` *before* ranking and filtering. Our final graph:"
+      ],
+      "id": "f7062c4b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_bar().transform_filter(\n",
+        "    'datum.Director != null'\n",
+        ").transform_aggregate(\n",
+        "    Gross='sum(Worldwide_Gross)',\n",
+        "    groupby=['Director']\n",
+        ").transform_window(\n",
+        "    Rank='rank()',\n",
+        "    sort=[alt.SortField('Gross', order='descending')]\n",
+        ").transform_filter(\n",
+        "    'datum.Rank < 20'\n",
+        ").encode(\n",
+        "    alt.X('Gross:Q'),\n",
+        "    alt.Y('Director:N', sort=alt.EncodingSortField(\n",
+        "        op='max', field='Gross', order='descending'\n",
+        "    ))\n",
+        ")"
+      ],
+      "id": "f1e75cfc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## `transform_window`: in-class exercise\n",
+        "\n",
+        "Steven Spielberg has been quite successful in his career! However, showing sums might favor directors who have had longer careers, and so have made more movies and thus more money. \n",
+        "\n",
+        "What happens if we change the choice of aggregate operation? Who is the most successful director in terms of  `average` gross per film? Modify the aggregate transform above!\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Advanced data transformation: summary\n",
+        "Purpose | Vega | `pandas` equivalent | R `dplyr` equivalent (`df %>% ...`) | \n",
+        "| --- | --- | --- | \n",
+        "Define a new variable | `transform_calculate()` | `df['new_col']` | `mutate()` |\n",
+        "Filter to subset of rows | `transform_filter(cond)` | `df.loc[cond]` | `filter(cond)` |\n",
+        "Aggregate function - reduces number of rows down to one per group | `transform_aggregate(groupby(...))` | `df.groupby('A').agg('mean')` | `group_by(A) |> summarise(mean(...))` |\n",
+        "Window function - transform across multiple rows, keeps same num. of rows) | `transform_window(sum())` | `df['values'].cumsum()`  | `mutate(cumsum())` |\n",
+        "\n",
+        "\n",
+        "Finally, Altair actually has 19 transformation methods (and counting...) and we have only covered four of them. Read about the rest of them [here](https://altair-viz.github.io/user_guide/transform/index.html)."
+      ],
+      "id": "3548e4d1"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/opt/anaconda3/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

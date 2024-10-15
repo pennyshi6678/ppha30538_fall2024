@@ -150,7 +150,7 @@ Now it's clear which movie types are most and least popular
 #Attribution: ChatGPT
 #Query: I have the following bar chart code in Altair [...] 
 # I want to sort the bars by the X encoding (average rotten tomatoes rating). How can I do that?
-alt.Chart(movies_url).mark_bar().encode(
+chart1  = alt.Chart(movies_url).mark_bar().encode(
     alt.X('average(Rotten_Tomatoes_Rating):Q'),
     alt.Y('Major_Genre:N', 
         sort=alt.EncodingSortField(
@@ -160,6 +160,7 @@ alt.Chart(movies_url).mark_bar().encode(
         )
     )
 )
+chart1
 ```
 
 Discussion question -- Why is "how to sorting the order of bars" such a great problem to submit to ChatGPT?
@@ -196,7 +197,7 @@ obviously we need to aggregate.
 also: what bug in the data does this plot reveal?
 
 ```{python}
-alt.Chart(movies_url).mark_point().encode(
+alt.Chart(movies_url).mark_bar().encode(
     alt.X('Release_Date:T'),
     alt.Y('US_Gross:Q')
 )
@@ -213,7 +214,14 @@ Hint: if you aren't sure how to aggregate the x-variable, go back to the first v
 2. *Pair* -- compare your results with person next to you
 
 3. *Share* -- discuss results as a class
+```{python}
 
+chart2 = alt.Chart(movies_url).mark_bar().encode(
+    alt.X('month(Release_Date):T'),
+    alt.Y('max(US_Gross):Q')
+)
+chart2
+```
 
 ## Aggregation: summary
 
