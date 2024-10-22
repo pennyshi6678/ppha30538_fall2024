@@ -113,7 +113,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="3404d44b" class="cell" data-execution_count="1">
+<div id="35cba1b4" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the following code will turn off any Python warnings in your code output</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -165,7 +165,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Q1</h1>
 <section id="section" class="level2">
 <h2 class="anchored" data-anchor-id="section">(1)</h2>
-<div id="25e9c1af" class="cell" data-execution_count="2">
+<div id="e503d6be" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -183,14 +183,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(df) <span class="op">==</span> <span class="dv">287458</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Number of rows is </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">, expected 287458"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time taken to read the file: 1.2432587146759033 seconds
+<pre><code>Time taken to read the file: 0.7852110862731934 seconds
 Number of rows is 287458, expected 287458</code></pre>
 </div>
 </div>
 </section>
 <section id="section-1" class="level2">
 <h2 class="anchored" data-anchor-id="section-1">(2)</h2>
-<div id="87ecea07" class="cell" data-execution_count="3">
+<div id="81fcabd1" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>file_size <span class="op">=</span> os.path.getsize(csv_file) <span class="op">/</span> <span class="dv">1024</span> <span class="op">/</span> <span class="dv">1024</span></span>
@@ -201,14 +201,14 @@ Number of rows is 287458, expected 287458</code></pre>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>full_dataset_size <span class="op">=</span> file_size <span class="op">*</span> <span class="dv">100</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The estimated size of the full dataset is </span><span class="sc">{</span>full_dataset_size<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>The size of the CSV file is 80.05 MB
-The estimated size of the full dataset is 8005.41 MB</code></pre>
+<pre><code>The size of the CSV file is 79.78 MB
+The estimated size of the full dataset is 7978.00 MB</code></pre>
 </div>
 </div>
 </section>
 <section id="section-2" class="level2">
 <h2 class="anchored" data-anchor-id="section-2">(3)</h2>
-<div id="2f02dda7" class="cell" data-execution_count="4">
+<div id="277fa54d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df_sub <span class="op">=</span> df.loc[<span class="dv">0</span>:<span class="dv">499</span>]</span>
@@ -263,7 +263,7 @@ address is not sorted at row 1</code></pre>
 <h1>Q2</h1>
 <section id="section-3" class="level2">
 <h2 class="anchored" data-anchor-id="section-3">(1)</h2>
-<div id="48790fa2" class="cell" data-execution_count="5">
+<div id="8ef63318" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"issue_year"</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">"issue_date"</span>].<span class="bu">str</span>[:<span class="dv">4</span>])</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tickets_in_2017 <span class="op">=</span> <span class="bu">len</span>(df[df[<span class="st">"issue_year"</span>] <span class="op">==</span> <span class="dv">2017</span>])</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"In this dataset, </span><span class="sc">{</span>tickets_in_2017<span class="sc">}</span><span class="ss"> tickets are issued in 2017"</span>)</span>
@@ -293,7 +293,7 @@ Thus, it is estimated that 2236400 /sers/akbar/Documents/Study/FundamentalsofDee
 </section>
 <section id="section-4" class="level2">
 <h2 class="anchored" data-anchor-id="section-4">(2)</h2>
-<div id="af138dd0" class="cell" data-execution_count="6">
+<div id="78326ea0" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>violation_summary <span class="op">=</span> df.groupby(<span class="st">"violation_code"</span>).size()</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>violation_summary <span class="op">=</span> violation_summary.sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>top_20 <span class="op">=</span> violation_summary.head(<span class="dv">20</span>)</span>
@@ -385,31 +385,31 @@ dtype: int64
 18                        STOP SIGN OR TRAFFIC SIGNAL   2191
 19                                PARK OR BLOCK ALLEY   2050</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="6">
 
 <style>
-  #altair-viz-17c8ad5c1dc643228f9418c7e6599a43.vega-embed {
+  #altair-viz-bbeab846043a4b1b9e21b0f84130b396.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-17c8ad5c1dc643228f9418c7e6599a43.vega-embed details,
-  #altair-viz-17c8ad5c1dc643228f9418c7e6599a43.vega-embed details summary {
+  #altair-viz-bbeab846043a4b1b9e21b0f84130b396.vega-embed details,
+  #altair-viz-bbeab846043a4b1b9e21b0f84130b396.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-17c8ad5c1dc643228f9418c7e6599a43"></div>
+<div id="altair-viz-bbeab846043a4b1b9e21b0f84130b396"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-17c8ad5c1dc643228f9418c7e6599a43") {
-      outputDiv = document.getElementById("altair-viz-17c8ad5c1dc643228f9418c7e6599a43");
+    if (outputDiv.id !== "altair-viz-bbeab846043a4b1b9e21b0f84130b396") {
+      outputDiv = document.getElementById("altair-viz-bbeab846043a4b1b9e21b0f84130b396");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
       "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
-      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.8.0?noext",
       "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
     };
 
@@ -445,12 +445,12 @@ dtype: int64
       require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
     } else {
       maybeLoadScript("vega", "5")
-        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-lite", "5.8.0"))
         .then(() => maybeLoadScript("vega-embed", "6"))
         .catch(showError)
         .then(() => displayChart(vegaEmbed));
     }
-  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-27afc7ee9a3e4f9cb3b215ed5352d7db"}, "mark": {"type": "bar"}, "encoding": {"x": {"axis": {"labelAlign": "left", "labelAngle": 45, "labelLimit": 300}, "field": "violation_description", "sort": "-y", "title": "Violation Description", "type": "nominal"}, "y": {"field": "count", "title": "Frequency", "type": "quantitative"}}, "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-27afc7ee9a3e4f9cb3b215ed5352d7db": [{"violation_description": "EXPIRED PLATES OR TEMPORARY REGISTRATION", "count": 44811}, {"violation_description": "STREET CLEANING", "count": 28712}, {"violation_description": "RESIDENTIAL PERMIT PARKING", "count": 23683}, {"violation_description": "EXP. METER NON-CENTRAL BUSINESS DISTRICT", "count": 20600}, {"violation_description": "PARKING/STANDING PROHIBITED ANYTIME", "count": 19753}, {"violation_description": "EXPIRED METER OR OVERSTAY", "count": 18756}, {"violation_description": "REAR AND FRONT PLATE REQUIRED", "count": 15829}, {"violation_description": "NO CITY STICKER VEHICLE UNDER/EQUAL TO 16,000 LBS.", "count": 14246}, {"violation_description": "RUSH HOUR PARKING", "count": 11965}, {"violation_description": "NO CITY STICKER OR IMPROPER DISPLAY", "count": 10773}, {"violation_description": "EXPIRED METER CENTRAL BUSINESS DISTRICT", "count": 9736}, {"violation_description": "NO STANDING/PARKING TIME RESTRICTED", "count": 8640}, {"violation_description": "WITHIN 15' OF FIRE HYDRANT", "count": 6104}, {"violation_description": "PARK OR STAND IN BUS/TAXI/CARRIAGE STAND", "count": 6004}, {"violation_description": "TRUCK,RV,BUS, OR TAXI RESIDENTIAL STREET", "count": 4789}, {"violation_description": "STREET CLEANING OR SPECIAL EVENT", "count": 3370}, {"violation_description": "DOUBLE PARKING OR STANDING", "count": 2904}, {"violation_description": "EXPIRED PLATE OR TEMPORARY REGISTRATION", "count": 2720}, {"violation_description": "STOP SIGN OR TRAFFIC SIGNAL", "count": 2191}, {"violation_description": "PARK OR BLOCK ALLEY", "count": 2050}]}}, {"mode": "vega-lite"});
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-fe4c7c123d279b9b21e85590dff113d4"}, "mark": {"type": "bar"}, "encoding": {"x": {"axis": {"labelAlign": "left", "labelAngle": 45, "labelLimit": 300}, "field": "violation_description", "sort": "-y", "title": "Violation Description", "type": "nominal"}, "y": {"field": "count", "title": "Frequency", "type": "quantitative"}}, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-fe4c7c123d279b9b21e85590dff113d4": [{"violation_description": "EXPIRED PLATES OR TEMPORARY REGISTRATION", "count": 44811}, {"violation_description": "STREET CLEANING", "count": 28712}, {"violation_description": "RESIDENTIAL PERMIT PARKING", "count": 23683}, {"violation_description": "EXP. METER NON-CENTRAL BUSINESS DISTRICT", "count": 20600}, {"violation_description": "PARKING/STANDING PROHIBITED ANYTIME", "count": 19753}, {"violation_description": "EXPIRED METER OR OVERSTAY", "count": 18756}, {"violation_description": "REAR AND FRONT PLATE REQUIRED", "count": 15829}, {"violation_description": "NO CITY STICKER VEHICLE UNDER/EQUAL TO 16,000 LBS.", "count": 14246}, {"violation_description": "RUSH HOUR PARKING", "count": 11965}, {"violation_description": "NO CITY STICKER OR IMPROPER DISPLAY", "count": 10773}, {"violation_description": "EXPIRED METER CENTRAL BUSINESS DISTRICT", "count": 9736}, {"violation_description": "NO STANDING/PARKING TIME RESTRICTED", "count": 8640}, {"violation_description": "WITHIN 15' OF FIRE HYDRANT", "count": 6104}, {"violation_description": "PARK OR STAND IN BUS/TAXI/CARRIAGE STAND", "count": 6004}, {"violation_description": "TRUCK,RV,BUS, OR TAXI RESIDENTIAL STREET", "count": 4789}, {"violation_description": "STREET CLEANING OR SPECIAL EVENT", "count": 3370}, {"violation_description": "DOUBLE PARKING OR STANDING", "count": 2904}, {"violation_description": "EXPIRED PLATE OR TEMPORARY REGISTRATION", "count": 2720}, {"violation_description": "STOP SIGN OR TRAFFIC SIGNAL", "count": 2191}, {"violation_description": "PARK OR BLOCK ALLEY", "count": 2050}]}}, {"mode": "vega-lite"});
 </script>
 </div>
 </div>
@@ -460,7 +460,7 @@ dtype: int64
 <h1>Q3</h1>
 <section id="section-5" class="level2">
 <h2 class="anchored" data-anchor-id="section-5">(2)</h2>
-<div id="04190886" class="cell" data-execution_count="7">
+<div id="7e8ab8a8" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.head(<span class="dv">20</span>))</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'is_paid'</span>] <span class="op">=</span> df[<span class="st">'ticket_queue'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="dv">1</span> <span class="cf">if</span> x <span class="op">==</span> <span class="st">'Paid'</span> <span class="cf">else</span> <span class="dv">0</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>paid_summary <span class="op">=</span> df.groupby([<span class="st">'vehicle_make'</span>,<span class="st">'is_paid'</span>]).size().reset_index()</span>

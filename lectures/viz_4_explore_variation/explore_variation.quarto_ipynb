@@ -1,0 +1,753 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Visualization (Exploring variation)\"\n",
+        "author: \"Peter Ganong and Maggie Shi\"\n",
+        "date: today\n",
+        "date-format: long\n",
+        "format: \n",
+        "    html:\n",
+        "        echo: true\n",
+        "        code: true\n",
+        "        toc: true\n",
+        "        output: true\n",
+        "engine: jupyter\n",
+        "---"
+      ],
+      "id": "43e79f39"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "message": false
+      },
+      "source": [
+        "#| echo: false\n",
+        "import altair as alt\n",
+        "from vega_datasets import data\n",
+        "from palmerpenguins import load_penguins\n",
+        "from plotnine import *\n",
+        "from plotnine.data import diamonds, mpg\n",
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "import matplotlib.image as mpimg"
+      ],
+      "id": "146a0d0d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Motivation\n",
+        "\n",
+        "## Introduction to the next two lectures\n",
+        "\n",
+        "Most of our visualization lectures are based on the University of Washington textbook, but the textbook doesn't have enough material on exploratory data analysis. We therefore are supplementing with the [Data Visualization](https://r4ds.hadley.nz/data-visualize) and [Exploratory Data Analysis](https://r4ds.hadley.nz/eda) material in the R for Data Science textbook (with the code translated to Altair).\n",
+        "\n",
+        "* `diamonds` is from \"Exploratory Data Analysis\"\n",
+        "* `movies` is from the UW textbook \n",
+        "* `penguins` is from \"Data Visualization\" \n",
+        "* `mpg`\n",
+        "\n",
+        "## What is exploratory data analysis?\n",
+        "\n",
+        "Data visualization has two distinct goals\n",
+        "\n",
+        "1. **exploration** for you to learn as much as possible\n",
+        "2. **production** for you to teach someone else what you think the key lessons are\n",
+        "\n",
+        "How do the modes differ?\n",
+        "\n",
+        "* When you are in exploration mode, you will look at lots of patterns and your brain filters out the noise\n",
+        "* Production mode is like putting a cone on your dog. You are deliberately limiting the reader's field of vision such that they see the key messages from the plot *and avoid too many distractions*\n",
+        "\n",
+        "The next two lectures are almost entirely about **exploration**. Then, at the end of lecture 5, we will transition to thinking about graphics for production. Lecture 6 will similarly about graphics for production.\n",
+        "\n",
+        "Caveat: these modes make the most sense when thinking about *static* visualization. Later on in the course, when we talk about dashboards, this is closer to making interfaces to help readers who don't code explore the data. \n",
+        "\n",
+        "\n",
+        "# Categorical variables\n",
+        "\n",
+        "## Categorical variables: roadmap \n",
+        "\n",
+        "* introduce `diamonds`\n",
+        "* show table\n",
+        "* show bar graph\n",
+        "\n",
+        "## introduce dataset `diamonds`"
+      ],
+      "id": "68ba5467"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from plotnine.data import diamonds, mpg\n",
+        "diamonds"
+      ],
+      "id": "20e6f4ff",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## `diamonds` data dictionary\n",
+        "(Accessed by running `?diamonds` in R)\n",
+        "A data frame with 53940 rows and 10 variables:\n",
+        "\n",
+        "* `price` - price in US dollars ($326–$18,823)\n",
+        "* `carat`- weight of the diamond (0.2–5.01)\n",
+        "* `cut` - quality of the cut (Fair, Good, Very Good, Premium, Ideal)\n",
+        "* `color` - diamond colour, from D (best) to J (worst)\n",
+        "* `clarity` - a measurement of how clear the diamond is (I1 (worst), SI2, SI1, VS2, VS1, VVS2, VVS1, IF (best))\n",
+        "* `x` -- length in mm (0–10.74)\n",
+        "* `y` -- width in mm (0–58.9)\n",
+        "* `z` -- depth in mm (0–31.8)\n",
+        "* `depth` -- total depth percentage = z / mean(x, y) = 2 * z / (x + y) (43–79)\n",
+        "* `table` -- width of top of diamond relative to widest point (43–95)\n",
+        "\n",
+        "##  `diamonds` "
+      ],
+      "id": "213dcf41"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| warning: false\n",
+        "diamonds_cut = diamonds.groupby('cut').size()\n",
+        "diamonds_cut"
+      ],
+      "id": "43974156",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Categorical variables\n"
+      ],
+      "id": "9f2721f1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "diamonds_cut = diamonds_cut.reset_index().rename(columns={0:'N'}) # Prepare to plot\n",
+        "\n",
+        "alt.Chart(diamonds_cut).mark_bar().encode(\n",
+        "    alt.X('cut'),\n",
+        "    alt.Y('N')\n",
+        ")"
+      ],
+      "id": "c691e380",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Categorical variables -- summary\n",
+        "\n",
+        "* this section is very brief because there's basically only one good way to plot categorical variables with a small number of categories and this is it. \n",
+        "    * You can use `mark_point()` instead of `mark_bar()`, but overall, there's a clear right answer about how to do this. \n",
+        "* We include this material mainly to foreshadow the fact that we will do a lot on categorical variables in the next lecture when we get to \"Exploring Co-variation\"\n",
+        "\n",
+        "\n",
+        "# Continuous variables\n",
+        "\n",
+        "## Roadmap: Continuous variables\n",
+        "\n",
+        "* histograms using `movies`\n",
+        "* histograms and density plots using `penguins`\n",
+        "* diamond size (carat)\n",
+        "\n",
+        "Remark: The skills are absolutely fundamental and so we will intentionally be a bit repetitive.\n",
+        "\n",
+        "\n",
+        "## movies dataset"
+      ],
+      "id": "80f19b74"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "movies_url = 'https://cdn.jsdelivr.net/npm/vega-datasets@1/data/movies.json'"
+      ],
+      "id": "3e52af18",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| eval: false\n",
+        "movies = pd.read_json(movies_url)"
+      ],
+      "id": "2b748133",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| echo: false\n",
+        "movies = pd.read_json('data/movies.json')"
+      ],
+      "id": "e5df885f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## recap scatter plot from lecture 3"
+      ],
+      "id": "643205ec"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_circle().encode(\n",
+        "    alt.X('Rotten_Tomatoes_Rating:Q', bin=alt.BinParams(maxbins=20)),\n",
+        "    alt.Y('IMDB_Rating:Q')\n",
+        ")"
+      ],
+      "id": "e4461da4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "One question which came up (which is hard to tell from this scatter plot, even with bins) is how many observations are there in each bin\n",
+        "\n",
+        "## scatter plot -- N movies per bin"
+      ],
+      "id": "3705c2ca"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_circle().encode(\n",
+        "    alt.X('Rotten_Tomatoes_Rating:Q', bin=alt.BinParams(maxbins=20)),\n",
+        "    alt.Y('count(IMDB_Rating):Q')\n",
+        ")"
+      ],
+      "id": "9bc91773",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## scatter plot -- syntax trick\n",
+        "Replace `count(IMDB_Rating)` with `count()` because we aren't using IMDB rating any more."
+      ],
+      "id": "35bad207"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(movies_url).mark_circle().encode(\n",
+        "    alt.X('Rotten_Tomatoes_Rating:Q', bin=alt.BinParams(maxbins=20)),\n",
+        "    alt.Y('count():Q')\n",
+        ")"
+      ],
+      "id": "cb0d3231",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## histogram using `mark_bar()`"
+      ],
+      "id": "22ecec06"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "hist_rt = alt.Chart(movies_url).mark_bar().encode(\n",
+        "    alt.X('Rotten_Tomatoes_Rating:Q', bin=alt.BinParams(maxbins=20)),\n",
+        "    alt.Y('count():Q')\n",
+        ")\n",
+        "hist_rt"
+      ],
+      "id": "21441459",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Discussion question: how would you describe the distribution of rotten tomatoes ratings?\n",
+        "\n",
+        "\n",
+        "\n",
+        "## histogram of IMDB ratings"
+      ],
+      "id": "5a9d742e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "hist_imdb = alt.Chart(movies_url).mark_bar().encode(\n",
+        "    alt.X('IMDB_Rating:Q', bin=alt.BinParams(maxbins=20)),\n",
+        "    alt.Y('count():Q')\n",
+        ")\n",
+        "hist_imdb"
+      ],
+      "id": "539d1cca",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Side-by-side\n",
+        "Discussion question -- compare the two ratings distributions. If _your goal is to differentiate between good and bad movies_, which is more informative?\n"
+      ],
+      "id": "85ce4006"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "hist_rt | hist_imdb"
+      ],
+      "id": "c96079f9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## introducing the penguins"
+      ],
+      "id": "227fbe88"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from palmerpenguins import load_penguins\n",
+        "penguins = load_penguins()\n",
+        "display(penguins)"
+      ],
+      "id": "a90b2824",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## histogram with steps of 200"
+      ],
+      "id": "2e43dd79"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(penguins).mark_bar().encode(\n",
+        "    alt.X('body_mass_g', bin=alt.BinParams(step=200)),\n",
+        "    alt.Y('count()')\n",
+        ")"
+      ],
+      "id": "40903927",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## histogram `step` parameter\n",
+        "\n",
+        "20 vs 200 vs 2000\n"
+      ],
+      "id": "98ffb122"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| echo: false\n",
+        "\n",
+        "plot1 = alt.Chart(penguins).mark_bar().encode(\n",
+        "    alt.X('body_mass_g', bin=alt.BinParams(step=20)),\n",
+        "    alt.Y('count()'))\n",
+        "\n",
+        "plot2 = alt.Chart(penguins).mark_bar().encode(\n",
+        "    alt.X('body_mass_g', bin=alt.BinParams(step=200)),\n",
+        "    alt.Y('count()'))\n",
+        "\n",
+        "plot3 = alt.Chart(penguins).mark_bar().encode(\n",
+        "    alt.X('body_mass_g', bin=alt.BinParams(step=2000)),\n",
+        "    alt.Y('count()'))\n",
+        "\n",
+        "plot1 & plot2 & plot3"
+      ],
+      "id": "f91a8447",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Discussion q -- what message comes from each `binwidth` choice? Which do you prefer?\n",
+        "\n",
+        "\n",
+        "## numeric variable: `transform_density()` "
+      ],
+      "id": "fcdfb4a0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(penguins).transform_density(\n",
+        "    'body_mass_g',\n",
+        "    as_=['body_mass_g', 'density']\n",
+        ").mark_area().encode(\n",
+        "    x='body_mass_g:Q',\n",
+        "    y='density:Q'\n",
+        ")"
+      ],
+      "id": "eb2c526a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Back to diamonds, focus on `carat`"
+      ],
+      "id": "eb8f686c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.data_transformers.disable_max_rows() # Needed because len(df) > 5000\n",
+        "\n",
+        "alt.Chart(diamonds).mark_bar().encode(\n",
+        "    alt.X('carat', bin=alt.Bin(maxbins=10)),\n",
+        "    alt.Y('count()')\n",
+        ")"
+      ],
+      "id": "597be18d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Continuous Variables"
+      ],
+      "id": "c02d71b2"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| warning: false\n",
+        "diamonds['bins'] = pd.cut(diamonds['carat'], bins=10)\n",
+        "diamonds.groupby('bins').size()"
+      ],
+      "id": "c1ad71b0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Continuous Variables: Typical Values"
+      ],
+      "id": "f6788a02"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "diamonds = diamonds.drop('bins', axis=1) # 'Interval' type causes plotting issues \n",
+        "diamonds_small = diamonds.loc[diamonds['carat'] < 2.1] # Subset to small diamonds\n",
+        "\n",
+        "alt.Chart(diamonds_small).mark_bar().encode(\n",
+        "    alt.X('carat', bin=alt.BinParams(step=0.1)),\n",
+        "    alt.Y('count()')\n",
+        ")"
+      ],
+      "id": "d58b2d13",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Continuous Variables: Typical Values"
+      ],
+      "id": "beb8a6ba"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alt.Chart(diamonds_small).mark_bar().encode(\n",
+        "    alt.X('carat', bin=alt.BinParams(step=0.01)),\n",
+        "    alt.Y('count()')\n",
+        ")"
+      ],
+      "id": "0a23a8f5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Discussion questions \n",
+        "\n",
+        "1. What lessons does this plot teach?\n",
+        "2. What questions does it raise?\n",
+        "\n",
+        "\n",
+        "## Aside: \"A Sunday on La Grande Jatte\" by Seurat\n",
+        "\n",
+        "![](pictures/seurat.jpg)\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Aside: \"A Sunday on La Grande Jatte\" by Seurat\n",
+        "![](pictures/seurat_zoomed.jpg)\n",
+        "\n",
+        "\n",
+        "\n",
+        "# Unusual numeric values (`diamonds`)\n",
+        "<!-- source: Lecture 5, slides 26-44 -->\n",
+        " \n",
+        "## roadmap\n",
+        "\n",
+        "* case study: `y` dimension in diamonds\n",
+        "    * explore some unusual  values\n",
+        "    * three options for handling unusual values\n",
+        "\n",
+        "## Diamonds: examine unusual values\n"
+      ],
+      "id": "38e86622"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "diamonds['y'].describe()"
+      ],
+      "id": "8942a4d2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Diamonds: examine unusual values "
+      ],
+      "id": "018bf2bb"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "diamonds.loc[(diamonds['y'] < 3) | (diamonds['y'] > 20)] "
+      ],
+      "id": "ef23bdc4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Diamonds: sanity check by comparing to 10 random diamonds"
+      ],
+      "id": "b9bb5b30"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "diamonds.sample(n=10)"
+      ],
+      "id": "74366c65",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## What to do with unusual values?\n",
+        "\n",
+        "1. Drop row\n",
+        "2. Code value to `NA`\n",
+        "3. Winsorize value\n",
+        "\n",
+        "## Diamonds: option 1 for unusual values: drop"
+      ],
+      "id": "47bb460a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "diamonds_clean = diamonds.loc[(diamonds['y'] >= 3) | (diamonds['y'] <= 20)] \n",
+        "diamonds_clean"
+      ],
+      "id": "aa3487e1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Diamonds: option 2 for unusual values: missing"
+      ],
+      "id": "a7a7249b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "diamonds['y'] = np.where((diamonds['y'] < 3) | (diamonds['y'] > 20), np.nan, diamonds['y'])\n",
+        "rows_with_na_y = diamonds[diamonds['y'].isna()]\n",
+        "print(rows_with_na_y)"
+      ],
+      "id": "c12102e8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Diamonds: option 3 for unusual values: winsorize\n",
+        "Winsorizing re-codes outliers, keeping them in the data. To winsorize at 1 percent:\n",
+        "* Replace anything less than the 1st percentile with the 1st percentile\n",
+        "* Replace anything more than the 99th percentile with the 99th percentile\n"
+      ],
+      "id": "1eeb9c1f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "pctile01 = diamonds['y'].quantile(0.01)\n",
+        "pctile99 = diamonds['y'].quantile(0.99)\n",
+        "\n",
+        "print(f\"1st Percentile: {pctile01}\")\n",
+        "print(f\"99th Percentile: {pctile99}\")"
+      ],
+      "id": "baf355c0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Diamonds: option 3 for unusual values: winsorize"
+      ],
+      "id": "870a9bec"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "diamonds['y_winsor'] = np.where(diamonds['y'] < pctile01, pctile01, \n",
+        "                                np.where(diamonds['y'] > pctile99, pctile99, diamonds['y']))\n",
+        "diamonds"
+      ],
+      "id": "16eed875",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "When is this useful? Income data, test scores, stock returns. Important when you are using procedures where the estimates are sensitive to outliers like computing a mean or running a regression\n",
+        "\n",
+        "## how do I know which option to choose?\n",
+        "\n",
+        "* make an educated guess by looking at the data as many ways as possible\n",
+        "* you often can ask your data provider... but they will quickly grow impatient so try to answer as many questions as possible yourself\n",
+        "\n",
+        "## Diamonds: what would you do?\n",
+        "* What would you do where `x`, `y`, and `z`?\n",
+        "* What would you do where `y > 20`? \n",
+        "\n",
+        "## Diamonds: what should we actually do?\n",
+        "My take (there is often not a ``right'' answer or you won't know the answer without talking to a data provider)\n",
+        "\n",
+        "* Rows where `x`, `y`, and `z` are all zero: set to `NA`\n",
+        "* Rows where `y > 20`: winsorize? (hard to know for sure...)\n",
+        "\n",
+        "## Summary: handling unusual numeric values \n",
+        "\n",
+        "| Problem | Action |\n",
+        "| ---- | --- | \n",
+        "| Erroneous row | drop row |\n",
+        "| Erroneous cell | set to NA or winsorize | \n",
+        "\n",
+        "How do I decide which problem I have? Examine unusual values in context of other columns (same row) and other rows (same columns). We will see this again in a future lecture.\n",
+        "\n",
+        "How do I decide whether to set to NA or winsorize? Ideally, ask your data provider what's going on with these values. \n"
+      ],
+      "id": "e2152742"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/opt/anaconda3/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
